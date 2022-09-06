@@ -3,8 +3,7 @@ package machineid_test
 import (
 	"fmt"
 	"log"
-
-	"github.com/denisbrodbeck/machineid"
+	"machineid"
 )
 
 func Example() {

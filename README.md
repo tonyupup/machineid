@@ -4,7 +4,7 @@
 
 … because sometimes you just need to reliably identify your machines.
 
-[![GoDoc](https://godoc.org/github.com/denisbrodbeck/machineid?status.svg)](https://godoc.org/github.com/denisbrodbeck/machineid) [![Go Report Card](https://goreportcard.com/badge/github.com/denisbrodbeck/machineid)](https://goreportcard.com/report/github.com/denisbrodbeck/machineid)
+[![GoDoc](https://godoc.org/github.com/tonyupup/machineid?status.svg)](https://godoc.org/github.com/tonyupup/machineid) [![Go Report Card](https://goreportcard.com/badge/github.com/tonyupup/machineid)](https://goreportcard.com/report/github.com/tonyupup/machineid)
 
 ## Main Features
 
@@ -13,30 +13,10 @@
 * Hardware independent (no usage of MAC, BIOS or CPU — those are too unreliable, especially in a VM environment)
 * IDs are unique<sup>[1](#unique-key-reliability)</sup> to the installed OS
 
-## Installation
-
-Get the library with
-
-```bash
-go get github.com/denisbrodbeck/machineid
-```
-
-You can also add the cli app directly to your `$GOPATH/bin` with
-
-```bash
-go get github.com/denisbrodbeck/machineid/cmd/machineid
-```
-
 ## Usage
 
 ```golang
 package main
-
-import (
-  "fmt"
-  "log"
-  "github.com/denisbrodbeck/machineid"
-)
 
 func main() {
   id, err := machineid.ID()
@@ -50,13 +30,6 @@ func main() {
 Or even better, use securely hashed machine IDs:
 
 ```golang
-package main
-
-import (
-  "fmt"
-  "log"
-  "github.com/denisbrodbeck/machineid"
-)
 
 func main() {
   id, err := machineid.ProtectedID("myAppName")
@@ -86,7 +59,7 @@ The following sources are used:
 * **BSD** uses `/etc/hostid` and `smbios.system.uuid` as a fallback
 * **Linux** uses `/var/lib/dbus/machine-id` ([man](http://man7.org/linux/man-pages/man5/machine-id.5.html))
 * **OS X** uses `IOPlatformUUID`
-* **Windows** uses the `MachineGuid` from `HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Cryptography`
+* **Windows** use  `wmic csproduct get uuid` (uses the `MachineGuid` from `HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Cryptography` is drop)
 
 ## Unique Key Reliability
 
@@ -104,32 +77,6 @@ A machine ID uniquely identifies the host. Therefore it should be considered "co
 
 That way the ID will be properly unique, and derived in a constant way from the machine ID but there will be no way to retrieve the original machine ID from the application-specific one.
 
-Do something along these lines:
-
-```golang
-package main
-
-import (
-  "crypto/hmac"
-  "crypto/sha256"
-  "fmt"
-  "github.com/denisbrodbeck/machineid"
-)
-
-const appKey = "WowSuchNiceApp"
-
-func main() {
-  id, _ := machineid.ID()
-  fmt.Println(protect(appKey, id))
-  // Output: dbabdb7baa54845f9bec96e2e8a87be2d01794c66fdebac3df7edd857f3d9f97
-}
-
-func protect(appID, id string) string {
-  mac := hmac.New(sha256.New, []byte(id))
-  mac.Write([]byte(appID))
-  return fmt.Sprintf("%x", mac.Sum(nil))
-}
-```
 
 Or simply use the convenience API call:
 
@@ -166,17 +113,10 @@ ioreg -rd1 -c IOPlatformExpertDevice | grep IOPlatformUUID
 Windows:
 
 ```batch
-reg query HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Cryptography /v MachineGuid
+wmic csproduct get uuid
 ```
-or
-* Open Windows Registry via `regedit`
-* Navigate to `HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Cryptography`
-* Take value of key `MachineGuid`
 
-## Credits
-
-The Go gopher was created by [Denis Brodbeck](https://github.com/denisbrodbeck) with [gopherize.me](https://gopherize.me/), based on original artwork from [Renee French](http://reneefrench.blogspot.com/).
 
 ## License
 
-The MIT License (MIT) — [Denis Brodbeck](https://github.com/denisbrodbeck). Please have a look at the [LICENSE.md](LICENSE.md) for more details.
+The MIT License (MIT) — [Denis Brodbeck](https://github.com/tonyupup). Please have a look at the [LICENSE.md](LICENSE.md) for more details.

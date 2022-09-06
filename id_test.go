@@ -1,6 +1,8 @@
 package machineid
 
-import "testing"
+import (
+	"testing"
+)
 
 func TestID(t *testing.T) {
 	got, err := ID()
