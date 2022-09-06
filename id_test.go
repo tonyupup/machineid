@@ -12,6 +12,7 @@ func TestID(t *testing.T) {
 	if got == "" {
 		t.Error("Got empty machine id")
 	}
+	t.Log(got)
 }
 
 func TestProtectedID(t *testing.T) {
